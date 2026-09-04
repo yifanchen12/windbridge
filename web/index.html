@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#176473">
+  <title>WindBridge 风桥</title>
+  <link rel="icon" href="/favicon.svg">
+  <style>
+    :root{--deep:#124b59;--wind:#20798a;--sky:#dff3ef;--cream:#fffdf4;--gold:#c9a85c;--ink:#193b41;--muted:#668087;--line:#cfe1dc;--shadow:0 18px 50px rgba(26,87,95,.13)}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:"Microsoft YaHei UI",system-ui,sans-serif;background:radial-gradient(circle at 78% 5%,rgba(255,255,255,.95),transparent 26%),linear-gradient(145deg,#eaf8f3,#d6eee9 54%,#f8f4df)}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.24;background-image:radial-gradient(circle at 18px 18px,#fff 0 2px,transparent 3px);background-size:56px 56px}
+    .shell{width:min(1080px,100%);margin:auto;padding:22px 18px 50px;position:relative}.hero{position:relative;overflow:hidden;border-radius:28px;padding:28px;color:#fff;background:linear-gradient(120deg,var(--deep),#278699);box-shadow:var(--shadow)}
+    .hero:before,.hero:after{content:"";position:absolute;border:1px solid rgba(255,255,255,.22);border-radius:50%}.hero:before{width:380px;height:380px;right:-170px;top:-260px}.hero:after{width:260px;height:260px;right:-70px;bottom:-220px}
+    .brand{font:700 27px Georgia,serif;letter-spacing:.3px}.brand span{font:600 16px "Microsoft YaHei UI"}.tagline{margin:12px 0 5px;font-size:19px;font-weight:700}.sub{color:#d8efec;font-size:13px}.pill{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.13);font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:#c9f29e;box-shadow:0 0 0 5px rgba(201,242,158,.14)}
+    .tabs{display:flex;width:100%;gap:8px;margin:18px 0;overflow:hidden}.tab{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;border:1px solid var(--line);border-radius:14px;background:rgba(255,253,244,.76);padding:12px 6px;color:var(--ink);font-weight:700}.tab.active{background:var(--deep);color:#fff;border-color:var(--deep)}
+    .panel{display:none}.panel.active{display:block}.card{background:rgba(255,253,244,.92);border:1px solid rgba(192,216,210,.8);border-radius:22px;padding:19px;box-shadow:var(--shadow)}h2{font-size:17px;margin:0 0 5px}.hint{margin:0 0 16px;color:var(--muted);font-size:13px;line-height:1.7}
+    .file{display:flex;width:100%;min-width:0;align-items:center;gap:12px;border-top:1px solid #e5eeea;padding:13px 0}.file:first-child{border-top:0}.file-icon{display:grid;place-items:center;width:42px;height:42px;flex:0 0 auto;border-radius:13px;background:var(--sky);color:var(--wind);font-size:21px}.file-main{min-width:0;flex:1 1 auto}.file-name{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:12px;color:var(--muted);margin-top:3px}
+    button,.button{font:inherit;cursor:pointer;border:0}.download,.primary{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;padding:10px 15px;background:var(--wind);color:#fff;font-weight:700}.download{padding:8px 12px;font-size:13px}.primary:active,.download:active{transform:translateY(1px)}
+    .drop{display:block;border:2px dashed #9fcac4;border-radius:20px;padding:36px 16px;text-align:center;background:#f5fbf8;transition:.2s}.drop.drag{border-color:var(--gold);background:#fff9e9}.drop strong{display:block;margin-bottom:6px}.drop input{display:none}.progress{height:9px;margin-top:14px;border-radius:99px;background:#dbe9e5;overflow:hidden}.bar{width:0;height:100%;background:linear-gradient(90deg,var(--wind),#78b89d);transition:.18s}.status{min-height:22px;margin-top:11px;font-size:13px;color:var(--muted)}
+    textarea{width:100%;min-height:210px;resize:vertical;border:1px solid var(--line);border-radius:16px;background:#fbfdf9;color:var(--ink);padding:14px;font:14px/1.65 inherit;outline:0}textarea:focus{border-color:#72aaae;box-shadow:0 0 0 3px rgba(51,142,149,.1)}.row{display:flex;gap:10px;margin-top:12px}.secondary{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#edf6f2;color:var(--deep);font-weight:700}
+    .empty{text-align:center;padding:40px 12px;color:var(--muted)}.blocked{margin-top:18px;border-color:#e8c98a;background:#fff9eb}.blocked strong{color:#775719}.footer{text-align:center;color:#648189;font-size:12px;margin-top:24px}
+    @media(max-width:620px){.shell{padding:12px 12px 34px}.hero{padding:22px;border-radius:22px}.tabs{position:sticky;top:8px;z-index:5}.tab{padding:11px 3px;font-size:13px}.card{border-radius:18px}.file{align-items:flex-start;gap:9px}.file-icon{width:40px;height:40px}.download{flex:0 0 auto;padding:8px 9px}.row{flex-wrap:wrap}.row button{flex:1}.brand{font-size:24px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="brand">WindBridge <span>风桥</span></div>
+      <div class="tagline">让文件随风抵达</div>
+      <div class="sub">同一局域网内直接传输，不经过云端中转</div>
+      <div class="pill"><i class="dot"></i><span id="connection">正在连接电脑…</span></div>
+    </section>
+
+    <nav class="tabs" aria-label="功能切换">
+      <button class="tab active" data-panel="receive">接收文件</button>
+      <button class="tab" data-panel="send">发送文件</button>
+      <button class="tab" data-panel="text">文本桥</button>
+    </nav>
+
+    <section id="receive" class="panel active card">
+      <h2>来自电脑的文件</h2>
+      <p class="hint">点击即可保存到当前设备。</p>
+      <div id="files"><div class="empty">等待电脑添加共享文件</div></div>
+    </section>
+
+    <section id="send" class="panel card">
+      <h2>发送到电脑</h2>
+      <p class="hint">文件会直接保存到电脑端设置的接收目录。</p>
+      <label id="drop" class="drop">
+        <strong>点此选择文件，或拖放到这里</strong>
+        <span class="hint">单次请求总量上限 2 GB</span>
+        <input id="picker" type="file" multiple>
+      </label>
+      <div class="progress"><div id="bar" class="bar"></div></div>
+      <div id="uploadStatus" class="status"></div>
+    </section>
+
+    <section id="text" class="panel card">
+      <h2>双向文本桥</h2>
+      <p class="hint" id="textMeta">发送链接、地址或一段文字到电脑。</p>
+      <textarea id="textArea" placeholder="在这里输入文本…"></textarea>
+      <div class="row">
+        <button id="sendText" class="primary">发送到电脑</button>
+        <button id="refreshText" class="secondary">读取电脑文本</button>
+        <button id="copyText" class="secondary">复制文本</button>
+      </div>
+      <div id="textStatus" class="status"></div>
+    </section>
+
+    <section id="blocked" class="card blocked" hidden>
+      <strong>需要重新配对</strong>
+      <p class="hint">此链接缺少有效配对码，请扫描电脑端当前二维码。</p>
+    </section>
+    <div class="footer">WindBridge · Local first · No cloud relay</div>
+  </main>
+  <script>
+    const query = new URLSearchParams(location.search);
+    const token = query.get('token') || sessionStorage.getItem('windbridge-token') || '';
+    if (token) sessionStorage.setItem('windbridge-token', token);
+    const headers = {'X-WindBridge-Token': token};
+    const api = async (path, options={}) => {
+      options.headers = {...headers, ...(options.headers || {})};
+      const response = await fetch(path, options);
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.error || `请求失败 (${response.status})`);
+      return body;
+    };
+    const fmt = bytes => {let value=Number(bytes)||0, units=['B','KB','MB','GB'], i=0; while(value>=1024&&i<3){value/=1024;i++} return `${value>=10||i===0?value.toFixed(0):value.toFixed(1)} ${units[i]}`};
+    document.querySelectorAll('.tab').forEach(button => button.onclick = () => {
+      document.querySelectorAll('.tab,.panel').forEach(node => node.classList.remove('active'));
+      button.classList.add('active'); document.getElementById(button.dataset.panel).classList.add('active');
+    });
+    async function refreshFiles(){
+      try {
+        const data = await api('/api/files');
+        const root = document.getElementById('files');
+        root.innerHTML = data.files.length ? data.files.map(file => `<div class="file"><div class="file-icon">↧</div><div class="file-main"><div class="file-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</div><div class="meta">${fmt(file.size)} · ${file.created_at.replace('T',' ')}</div></div><a class="download" href="/api/files/${file.id}/download?token=${encodeURIComponent(token)}">下载</a></div>`).join('') : '<div class="empty">等待电脑添加共享文件</div>';
+        document.getElementById('connection').textContent = '已连接到电脑';
+      } catch(error) { block(error.message); }
+    }
+    function escapeHtml(value){const node=document.createElement('span'); node.textContent=value; return node.innerHTML}
+    function block(message){document.getElementById('connection').textContent=message; document.getElementById('blocked').hidden=false}
+    const drop=document.getElementById('drop'), picker=document.getElementById('picker');
+    ['dragenter','dragover'].forEach(type=>drop.addEventListener(type,e=>{e.preventDefault();drop.classList.add('drag')}));
+    ['dragleave','drop'].forEach(type=>drop.addEventListener(type,e=>{e.preventDefault();drop.classList.remove('drag')}));
+    drop.addEventListener('drop',e=>upload(e.dataTransfer.files)); picker.addEventListener('change',()=>upload(picker.files));
+    function upload(files){
+      if(!files.length)return; const form=new FormData(); [...files].forEach(file=>form.append('files',file));
+      const xhr=new XMLHttpRequest(); xhr.open('POST','/api/upload'); xhr.setRequestHeader('X-WindBridge-Token',token);
+      xhr.upload.onprogress=e=>{if(e.lengthComputable)document.getElementById('bar').style.width=`${e.loaded/e.total*100}%`};
+      xhr.onload=()=>{let body={};try{body=JSON.parse(xhr.responseText)}catch{};document.getElementById('uploadStatus').textContent=xhr.status<300?`已送达 ${body.saved?.length||0} 个文件`:body.error||'发送失败';if(xhr.status<300)document.getElementById('bar').style.width='100%'};
+      xhr.onerror=()=>document.getElementById('uploadStatus').textContent='网络连接中断'; document.getElementById('uploadStatus').textContent='正在传送…'; xhr.send(form);
+    }
+    async function pullText(){try{const data=await api('/api/clipboard');document.getElementById('textArea').value=data.text||'';document.getElementById('textMeta').textContent=data.updated_at?`${data.source==='web'?'网页':'电脑'}更新于 ${data.updated_at.replace('T',' ')}`:'发送链接、地址或一段文字到电脑。'}catch(error){document.getElementById('textStatus').textContent=error.message}}
+    document.getElementById('sendText').onclick=async()=>{try{await api('/api/clipboard',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:document.getElementById('textArea').value})});document.getElementById('textStatus').textContent='文本已送达电脑'}catch(error){document.getElementById('textStatus').textContent=error.message}};
+    document.getElementById('refreshText').onclick=pullText;
+    document.getElementById('copyText').onclick=async()=>{try{await navigator.clipboard.writeText(document.getElementById('textArea').value);document.getElementById('textStatus').textContent='已复制'}catch{document.getElementById('textArea').select();document.execCommand('copy')}};
+    if(!token) block('缺少配对码'); else {refreshFiles();pullText();setInterval(refreshFiles,4000)}
+  </script>
+</body>
+</html>

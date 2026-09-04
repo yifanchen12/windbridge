@@ -1,0 +1,6 @@
+Flask>=3.1,<4
+Pillow>=11.3,<13
+qrcode[pil]>=8.2,<9
+pyinstaller>=6.15,<7
+pystray>=0.19,<1
+tkinterdnd2>=0.4,<1
