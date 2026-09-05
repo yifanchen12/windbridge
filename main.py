@@ -23,10 +23,11 @@ def smoke_test() -> int:
         "python": sys.version.split()[0],
         "local_ip": get_local_ip(),
         "web_ui": (ROOT / "web" / "index.html").is_file(),
+        "resume_scripts": all((ROOT / "web" / name).is_file() for name in ("transfer.js", "sha256.js")),
         "icon": (ROOT / "assets" / "app_icon.png").is_file(),
     }
     print(json.dumps(checks, ensure_ascii=False))
-    return 0 if checks["web_ui"] and checks["icon"] else 1
+    return 0 if checks["web_ui"] and checks["resume_scripts"] and checks["icon"] else 1
 
 
 def send_to_running_app(settings: Settings, paths: list[str]) -> bool:

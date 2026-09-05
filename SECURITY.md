@@ -2,7 +2,7 @@
 
 ## 支持范围
 
-当前维护版本为 `0.2.0`。安全修复优先针对当前版本和 GitHub Release 中明确标注的版本。
+当前维护版本为 `0.3.0`。安全修复优先针对当前版本和 GitHub Release 中明确标注的版本。
 
 ## 漏洞报告
 
@@ -36,7 +36,10 @@
 - 浏览器接口要求随机配对码；更换配对码后旧链接立即失效。
 - 资源管理器文件转交接口仅接受来自 `127.0.0.1` 或 `::1` 的请求，并验证独立的随机本机控制凭据。
 - 上传文件使用安全文件名并写入用户配置的接收目录；同名文件生成新名称，不覆盖既有文件。
-- 单次上传请求限制为 2 GB，避免无边界请求占用磁盘与内存。
+- 分块请求上限为 4 MiB，单文件上限为 2 GiB，续传记录上限为 128；旧版表单接口请求体上限为 2 GiB。未设置累计接收容量配额，应定期检查磁盘空间。
+- 接收目录的 `.windbridge-partials/` 持久化未完成文件、文件名、大小、指纹及分块摘要，不保存配对码。创建或列出任务时清理超过 7 天未更新的记录。取消任务不删除已完成文件。
+- SHA-256 用于完整性校验，不提供加密或发送方身份认证。持有当前配对码的设备可查看、继续或取消全部续传任务；任务不按设备隔离。
+- 下载支持 Range / If-Range。配对码轮换不终止已接受的请求，后续分块及下载请求需使用新码。
 - 文件共享列表、文本桥内容和活动记录仅驻留在进程内存中，退出后不会持久化。
 
 ## 已知边界
@@ -45,4 +48,6 @@
 
 ---
 
-The maintained version is `0.2.0`. Report security issues privately and remove pairing tokens, full URLs, private filenames, local paths, IP addresses, and other sensitive data. WindBridge is intended only for trusted local networks, has no telemetry or cloud relay, and must not be exposed directly to the public internet.
+The maintained version is `0.3.0`. Report security issues privately and remove pairing tokens, full URLs, private filenames, local paths, IP addresses, and other sensitive data. WindBridge is intended only for trusted local networks, has no telemetry or cloud relay, and must not be exposed directly to the public internet.
+
+Partial uploads and upload metadata persist in `.windbridge-partials/` under the receiving directory. Records unchanged for seven days are removed when uploads are created or listed. The current pairing token grants access to all upload sessions. SHA-256 checks integrity; it does not encrypt traffic or authenticate senders.

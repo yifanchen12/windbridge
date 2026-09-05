@@ -15,7 +15,11 @@ INVALID_FILENAME = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
 
 def safe_filename(name: str) -> str:
     cleaned = INVALID_FILENAME.sub("_", Path(name).name).strip(" .")
-    return cleaned[:180] or "unnamed-file"
+    cleaned = cleaned[:180].rstrip(" .") or "unnamed-file"
+    # Windows device names remain reserved even with an extension.
+    if cleaned.split(".")[0].upper() in {"CON", "PRN", "AUX", "NUL", *(f"{prefix}{i}" for prefix in ("COM", "LPT") for i in range(1, 10))}:
+        cleaned = ("_" + cleaned)[:180].rstrip(" .")
+    return cleaned
 
 
 def unique_destination(folder: Path, name: str) -> Path:
@@ -25,7 +29,8 @@ def unique_destination(folder: Path, name: str) -> Path:
         return candidate
     stem, suffix = candidate.stem, candidate.suffix
     for index in range(1, 10_000):
-        next_candidate = folder / f"{stem} ({index}){suffix}"
+        ending = f" ({index}){suffix[:90]}"
+        next_candidate = folder / f"{stem[:180-len(ending)]}{ending}"
         if not next_candidate.exists():
             return next_candidate
     raise OSError("无法为上传文件生成唯一名称")
@@ -49,6 +54,7 @@ class SharedFile:
 class BridgeState:
     def __init__(self, incoming_dir: str | Path) -> None:
         self.lock = threading.RLock()
+        self.upload_lock = threading.RLock()
         self.incoming_dir = Path(incoming_dir).expanduser().resolve()
         self.incoming_dir.mkdir(parents=True, exist_ok=True)
         self.token = secrets.token_urlsafe(8)
@@ -102,10 +108,10 @@ class BridgeState:
                 self._touch(f"已共享 {len(added)} 个文件")
         return added
 
-    def register_upload(self, path: str | Path, original_name: str) -> SharedFile:
+    def register_upload(self, path: str | Path, original_name: str, file_id: str | None = None) -> SharedFile:
         target = Path(path).resolve()
         item = SharedFile(
-            id=secrets.token_hex(8),
+            id=file_id or secrets.token_hex(8),
             name=safe_filename(original_name),
             path=str(target),
             size=target.stat().st_size,
@@ -113,6 +119,8 @@ class BridgeState:
             created_at=self._now(),
         )
         with self.lock:
+            if item.id in self.inbound:
+                return self.inbound[item.id]
             self.inbound[item.id] = item
             self._touch(f"收到文件：{item.name}")
         return item

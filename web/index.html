@@ -21,6 +21,7 @@
     textarea{width:100%;min-height:210px;resize:vertical;border:1px solid var(--line);border-radius:16px;background:#fbfdf9;color:var(--ink);padding:14px;font:14px/1.65 inherit;outline:0}textarea:focus{border-color:#72aaae;box-shadow:0 0 0 3px rgba(51,142,149,.1)}.row{display:flex;gap:10px;margin-top:12px}.secondary{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:#edf6f2;color:var(--deep);font-weight:700}
     .empty{text-align:center;padding:40px 12px;color:var(--muted)}.blocked{margin-top:18px;border-color:#e8c98a;background:#fff9eb}.blocked strong{color:#775719}.footer{text-align:center;color:#648189;font-size:12px;margin-top:24px}
     @media(max-width:620px){.shell{padding:12px 12px 34px}.hero{padding:22px;border-radius:22px}.tabs{position:sticky;top:8px;z-index:5}.tab{padding:11px 3px;font-size:13px}.card{border-radius:18px}.file{align-items:flex-start;gap:9px}.file-icon{width:40px;height:40px}.download{flex:0 0 auto;padding:8px 9px}.row{flex-wrap:wrap}.row button{flex:1}.brand{font-size:24px}}
+    .upload-task{padding:16px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}.upload-task progress{width:100%;height:12px;margin-top:10px;accent-color:var(--wind)}
   </style>
 </head>
 <body>
@@ -49,11 +50,12 @@
       <p class="hint">文件会直接保存到电脑端设置的接收目录。</p>
       <label id="drop" class="drop">
         <strong>点此选择文件，或拖放到这里</strong>
-        <span class="hint">单次请求总量上限 2 GB</span>
+        <span class="hint">单文件上限 2 GiB · 支持暂停、断线重试与续传</span>
         <input id="picker" type="file" multiple>
       </label>
-      <div class="progress"><div id="bar" class="bar"></div></div>
-      <div id="uploadStatus" class="status"></div>
+      <div class="row"><button id="refreshUploads" class="secondary">刷新续传任务</button></div>
+      <div id="uploadTasks"></div>
+      <div id="uploadStatus" class="status" role="status"></div>
     </section>
 
     <section id="text" class="panel card">
@@ -101,22 +103,13 @@
     }
     function escapeHtml(value){const node=document.createElement('span'); node.textContent=value; return node.innerHTML}
     function block(message){document.getElementById('connection').textContent=message; document.getElementById('blocked').hidden=false}
-    const drop=document.getElementById('drop'), picker=document.getElementById('picker');
-    ['dragenter','dragover'].forEach(type=>drop.addEventListener(type,e=>{e.preventDefault();drop.classList.add('drag')}));
-    ['dragleave','drop'].forEach(type=>drop.addEventListener(type,e=>{e.preventDefault();drop.classList.remove('drag')}));
-    drop.addEventListener('drop',e=>upload(e.dataTransfer.files)); picker.addEventListener('change',()=>upload(picker.files));
-    function upload(files){
-      if(!files.length)return; const form=new FormData(); [...files].forEach(file=>form.append('files',file));
-      const xhr=new XMLHttpRequest(); xhr.open('POST','/api/upload'); xhr.setRequestHeader('X-WindBridge-Token',token);
-      xhr.upload.onprogress=e=>{if(e.lengthComputable)document.getElementById('bar').style.width=`${e.loaded/e.total*100}%`};
-      xhr.onload=()=>{let body={};try{body=JSON.parse(xhr.responseText)}catch{};document.getElementById('uploadStatus').textContent=xhr.status<300?`已送达 ${body.saved?.length||0} 个文件`:body.error||'发送失败';if(xhr.status<300)document.getElementById('bar').style.width='100%'};
-      xhr.onerror=()=>document.getElementById('uploadStatus').textContent='网络连接中断'; document.getElementById('uploadStatus').textContent='正在传送…'; xhr.send(form);
-    }
     async function pullText(){try{const data=await api('/api/clipboard');document.getElementById('textArea').value=data.text||'';document.getElementById('textMeta').textContent=data.updated_at?`${data.source==='web'?'网页':'电脑'}更新于 ${data.updated_at.replace('T',' ')}`:'发送链接、地址或一段文字到电脑。'}catch(error){document.getElementById('textStatus').textContent=error.message}}
     document.getElementById('sendText').onclick=async()=>{try{await api('/api/clipboard',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:document.getElementById('textArea').value})});document.getElementById('textStatus').textContent='文本已送达电脑'}catch(error){document.getElementById('textStatus').textContent=error.message}};
     document.getElementById('refreshText').onclick=pullText;
     document.getElementById('copyText').onclick=async()=>{try{await navigator.clipboard.writeText(document.getElementById('textArea').value);document.getElementById('textStatus').textContent='已复制'}catch{document.getElementById('textArea').select();document.execCommand('copy')}};
     if(!token) block('缺少配对码'); else {refreshFiles();pullText();setInterval(refreshFiles,4000)}
   </script>
+  <script src="/sha256.js"></script>
+  <script src="/transfer.js"></script>
 </body>
 </html>
